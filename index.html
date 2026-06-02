@@ -2,400 +2,422 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Dashboard Operacional SGM · Chilquinta</title>
+<title>Reporte Operacional · Chilquinta Distribución</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
+:root{--red:#DA291C;--red-dark:#a81e13;--red-light:#f5cccb;--white:#fff;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--gray-800:#1f2937;--green:#16a34a;--amber:#d97706;--blue:#1d4ed8}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
-header{background:linear-gradient(135deg,#005e3a 0%,#00875a 60%,#059669 100%);padding:20px 28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
-.h-title{font-size:1.45rem;font-weight:800;color:#fff;letter-spacing:.3px}
-.h-sub{font-size:.82rem;color:#a7f3d0;margin-top:3px}
-.h-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
-.upd{font-size:.78rem;color:#6ee7b7;background:rgba(0,0,0,.25);padding:5px 13px;border-radius:20px}
-.gh-btn{font-size:.75rem;color:#a7f3d0;background:rgba(0,0,0,.2);padding:4px 12px;border-radius:16px;text-decoration:none;border:1px solid rgba(255,255,255,.15)}
-.gh-btn:hover{background:rgba(0,0,0,.35)}
-.container{max-width:1440px;margin:0 auto;padding:22px 18px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;background:#f5f5f5;color:var(--gray-800)}
+/* HEADER */
+header{background:var(--red);padding:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--red-dark)}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-badge{width:42px;height:42px;background:var(--white);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:var(--red)}
+.header-title{color:var(--white)}
+.header-title h1{font-size:1.25rem;font-weight:700;letter-spacing:.2px}
+.header-title p{font-size:.75rem;color:rgba(255,255,255,.8);margin-top:1px}
+.header-meta{text-align:right;color:rgba(255,255,255,.9);font-size:.78rem}
+.header-meta .date{font-size:.95rem;font-weight:600;color:var(--white)}
+.header-meta .upd{font-size:.72rem;color:rgba(255,255,255,.7);margin-top:2px}
+.header-nav{display:flex;gap:0;border-top:1px solid rgba(255,255,255,.15)}
+.nav-tab{padding:10px 20px;color:rgba(255,255,255,.75);font-size:.82rem;font-weight:600;cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;transition:all .2s;text-transform:uppercase;letter-spacing:.5px}
+.nav-tab:hover{color:var(--white);background:rgba(255,255,255,.1)}
+.nav-tab.active{color:var(--white);border-bottom-color:var(--white);background:rgba(0,0,0,.15)}
+/* CONTENT */
+.container{max-width:1400px;margin:0 auto;padding:20px 16px}
+.tab-content{display:none}.tab-content.active{display:block}
+/* STATUS BAR */
+.status-banner{background:var(--white);border-left:4px solid var(--green);border-radius:0 8px 8px 0;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.status-banner.alerta{border-left-color:var(--amber)}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(22,163,74,.3)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(22,163,74,0)}}
+.status-text{font-size:.85rem;color:var(--gray-800)} .status-text strong{color:var(--green)}
 /* KPIs */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
-.kpi{background:#1e293b;border-radius:12px;padding:14px 16px;border:1px solid #334155;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.kpi .val{font-size:1.9rem;font-weight:800;line-height:1.1}
-.kpi .lbl{font-size:.7rem;color:#94a3b8;margin-top:5px;text-transform:uppercase;letter-spacing:.5px}
-.kv-green .val{color:#10b981} .kv-amber .val{color:#f59e0b} .kv-red .val{color:#ef4444}
-.kv-blue .val{color:#60a5fa} .kv-purple .val{color:#a78bfa} .kv-cyan .val{color:#22d3ee}
-/* Status */
-.status-bar{display:flex;align-items:center;gap:10px;background:#0d2818;border:1px solid #166534;border-radius:10px;padding:12px 16px;margin-bottom:18px}
-.dot{width:10px;height:10px;border-radius:50%;background:#10b981;flex-shrink:0;animation:blink 2s infinite}
-@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,185,129,.5)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(16,185,129,.1)}}
-.status-text{font-size:.84rem;color:#86efac} .status-text strong{color:#4ade80}
-/* Layout */
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:18px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
-@media(max-width:1100px){.grid3{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.grid3,.grid2{grid-template-columns:1fr}}
-/* Sections */
-.section{background:#1e293b;border-radius:14px;padding:18px;border:1px solid #334155;box-shadow:0 2px 8px rgba(0,0,0,.2)}
-.sec-title{font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.badge{font-size:.63rem;padding:3px 9px;border-radius:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
-.b-mant{background:rgba(0,94,58,.8);color:#6ee7b7;border:1px solid #065f46}
-.b-sat{background:rgba(30,58,138,.8);color:#93c5fd;border:1px solid #1e40af}
-.b-clima{background:rgba(14,116,144,.7);color:#67e8f9;border:1px solid #0e7490}
-.b-sec{background:rgba(124,58,237,.6);color:#c4b5fd;border:1px solid #7c3aed}
-/* MSG cards */
-.msg-card{background:#0f172a;border-radius:9px;padding:12px 14px;margin-bottom:9px;border-left:3px solid #334155}
-.msg-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
-.msg-tag{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;color:#fff;text-transform:uppercase;letter-spacing:.4px}
-.msg-time{font-size:.73rem;color:#64748b;margin-left:auto;font-family:monospace}
-.msg-author{font-size:.81rem;color:#94a3b8;margin-bottom:4px;font-weight:600}
-.msg-text{font-size:.85rem;color:#cbd5e1;line-height:1.5}
-/* SAT feed */
-.sat-feed{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto}
-.sat-feed::-webkit-scrollbar{width:4px} .sat-feed::-webkit-scrollbar-track{background:#0f172a} .sat-feed::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}
-.sat-row{display:flex;align-items:flex-start;gap:7px;background:#0f172a;border-radius:8px;padding:9px 12px;flex-wrap:wrap;border:1px solid #1e293b}
-.sat-row.incidente{border-color:#7f1d1d;background:#1c0a0a}
-.sat-row.ok{border-color:#14532d;background:#0a1c10}
-.sat-badge{font-size:.59rem;font-weight:700;padding:2px 6px;border-radius:4px;color:#fff;white-space:nowrap;flex-shrink:0;text-transform:uppercase;margin-top:1px}
-.sat-time{font-size:.73rem;color:#64748b;font-family:monospace;flex-shrink:0}
-.sat-author{font-size:.77rem;color:#93c5fd;font-weight:600;min-width:120px;flex-shrink:0}
-.sat-text{font-size:.81rem;color:#cbd5e1;line-height:1.4}
-/* Turno cards */
-.turno-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin-bottom:12px}
-.turno-card{background:#0f172a;border-radius:9px;padding:11px;border:1px solid #1e3a5f}
-.turno-zona{font-size:.67rem;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.turno-tec{font-size:.81rem;color:#e2e8f0;font-weight:600}
-.turno-pat{font-size:.73rem;color:#64748b}
-.turno-ord{font-size:.71rem;color:#94a3b8;margin-top:3px;letter-spacing:.2px}
-/* Weather */
-.clima-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
-.zona-card{background:#0f172a;border-radius:9px;padding:11px;border:1px solid #0e4a66;text-align:center}
-.zona-name{font-size:.69rem;font-weight:700;color:#67e8f9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
-.zona-temp{font-size:1.2rem;font-weight:800;color:#e2e8f0}
-.zona-desc{font-size:.72rem;color:#94a3b8;margin-top:3px}
-.zona-wind{font-size:.7rem;color:#64748b;margin-top:2px}
-.clima-summary{background:#0a2030;border:1px solid #0e4a66;border-radius:8px;padding:10px 14px;font-size:.82rem;color:#7dd3fc;line-height:1.5}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:18px}
+.kpi{background:var(--white);border-radius:10px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08);border-top:3px solid var(--gray-200);text-align:center}
+.kpi.k-red{border-top-color:var(--red)} .kpi.k-green{border-top-color:var(--green)} .kpi.k-amber{border-top-color:var(--amber)} .kpi.k-blue{border-top-color:var(--blue)}
+.kpi .val{font-size:1.85rem;font-weight:800;line-height:1.1;color:var(--gray-800)}
+.kpi .lbl{font-size:.68rem;color:var(--gray-600);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+/* CARDS */
+.section-card{background:var(--white);border-radius:10px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid var(--gray-100)}
+.section-header h2{font-size:1rem;font-weight:700;color:var(--gray-800)}
+.section-badge{font-size:.63rem;padding:3px 9px;border-radius:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.b-red{background:var(--red);color:var(--white)} .b-green{background:#dcfce7;color:#166534} .b-blue{background:#dbeafe;color:#1e40af}
+/* Work cards */
+.work-card{border-radius:8px;padding:12px 14px;margin-bottom:10px;border-left:4px solid var(--gray-200);background:var(--gray-50)}
+.work-card.activo{border-left-color:var(--amber);background:#fffbeb}
+.work-card.info{border-left-color:var(--blue);background:#f0f7ff}
+.wc-header{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.wc-tag{font-size:.6rem;font-weight:700;padding:2px 7px;border-radius:4px;color:var(--white);text-transform:uppercase}
+.tag-activo{background:var(--amber)} .tag-info{background:var(--blue)} .tag-inc{background:var(--red)} .tag-ok{background:var(--green)}
+.wc-time{font-size:.72rem;color:var(--gray-600);margin-left:auto;font-family:monospace}
+.wc-author{font-size:.82rem;font-weight:600;color:var(--gray-600);margin-bottom:4px}
+.wc-text{font-size:.83rem;color:var(--gray-800);line-height:1.5}
+/* SAT */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.grid2{grid-template-columns:1fr}}
+.turno-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.turno-card{background:var(--gray-50);border-radius:8px;padding:10px;border:1px solid var(--gray-200)}
+.turno-zona{font-size:.63rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
+.turno-tec{font-size:.8rem;color:var(--gray-800);font-weight:600}
+.turno-pat{font-size:.71rem;color:var(--gray-600)}
+.turno-ord{font-size:.69rem;color:var(--gray-600);margin-top:3px;letter-spacing:.2px}
+.sat-row{display:flex;align-items:flex-start;gap:7px;border-radius:7px;padding:9px 12px;margin-bottom:6px;background:var(--gray-50);border:1px solid var(--gray-200);flex-wrap:wrap}
+.sat-row.inc{background:#fff5f5;border-color:#fecaca}
+.sat-row.ok{background:#f0fdf4;border-color:#bbf7d0}
+.sat-badge{font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:4px;color:var(--white);white-space:nowrap;flex-shrink:0;text-transform:uppercase}
+.sat-time{font-size:.71rem;color:var(--gray-600);font-family:monospace;flex-shrink:0}
+.sat-auth{font-size:.76rem;color:var(--blue);font-weight:600;min-width:110px;flex-shrink:0}
+.sat-text{font-size:.79rem;color:var(--gray-800);line-height:1.4}
+/* Charts */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:800px){.chart-grid{grid-template-columns:1fr}}
+.chart-box{background:var(--white);border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.chart-title{font-size:.88rem;font-weight:700;color:var(--gray-800);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--gray-100)}
+.chart-wrap{position:relative;height:240px}
 /* SEC */
-.sec-item{background:#0f172a;border-radius:9px;padding:12px 14px;margin-bottom:8px;border-left:3px solid #7c3aed}
-.sec-item-title{font-size:.85rem;font-weight:700;color:#c4b5fd;margin-bottom:4px}
-.sec-item-body{font-size:.8rem;color:#94a3b8;line-height:1.4}
-.sec-item-tag{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:4px;background:#4c1d95;color:#ddd6fe;text-transform:uppercase;display:inline-block;margin-bottom:6px}
+.sec-item{border-radius:8px;padding:12px 14px;margin-bottom:10px;border-left:4px solid var(--red);background:var(--white);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.sec-item.blue{border-left-color:var(--blue);background:#f0f7ff}
+.sec-item.amber{border-left-color:var(--amber);background:#fffbeb}
+.sec-item.green{border-left-color:var(--green);background:#f0fdf4}
+.sec-tag{font-size:.63rem;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;display:inline-block;margin-bottom:5px}
+.t-red{background:var(--red);color:var(--white)} .t-blue{background:var(--blue);color:var(--white)} .t-amber{background:var(--amber);color:var(--white)} .t-green{background:var(--green);color:var(--white)}
+.sec-title{font-size:.86rem;font-weight:700;color:var(--gray-800);margin-bottom:3px}
+.sec-body{font-size:.8rem;color:var(--gray-600);line-height:1.4}
 /* Photos */
-.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.photo-card{border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px;cursor:pointer;transition:transform .15s,box-shadow .15s;min-height:140px;justify-content:space-between;position:relative;overflow:hidden}
-.photo-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.5)}
-.photo-icon{font-size:2rem;text-align:center}
-.photo-meta{display:flex;flex-direction:column;gap:3px}
-.photo-grupo{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px}
-.photo-autor{font-size:.79rem;font-weight:600;color:#fff}
-.photo-desc{font-size:.74rem;color:rgba(255,255,255,.75);line-height:1.3}
-.photo-time{font-size:.7rem;color:rgba(255,255,255,.5)}
-.photo-note{background:#0f172a;border:1px dashed #334155;border-radius:10px;padding:12px 16px;text-align:center;font-size:.8rem;color:#64748b;grid-column:1/-1}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.photo-card{border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.photo-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.photo-thumb{width:100%;aspect-ratio:1;object-fit:cover;display:block;background:var(--gray-100)}
+.photo-info{padding:8px 10px;background:var(--white)}
+.photo-grupo{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.photo-grupo.mant{color:var(--red)} .photo-grupo.sat{color:var(--blue)}
+.photo-autor{font-size:.78rem;font-weight:600;color:var(--gray-800);margin-top:1px}
+.photo-time{font-size:.7rem;color:var(--gray-600)}
+/* Lightbox */
+#lb{display:none;position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:9999;align-items:center;justify-content:center}
+#lb.on{display:flex}
+#lb-img{max-width:90vw;max-height:80vh;object-fit:contain;border-radius:6px}
+#lb-close{position:absolute;top:16px;right:20px;color:rgba(255,255,255,.7);font-size:1.8rem;cursor:pointer;background:none;border:none;line-height:1}
+#lb-prev,#lb-next{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.15);border:none;color:var(--white);font-size:2rem;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#lb-prev{left:16px} #lb-next{right:16px}
+#lb-caption{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.6);color:var(--white);padding:12px 20px;font-size:.85rem;text-align:center}
 /* Footer */
-footer{text-align:center;padding:18px;font-size:.78rem;color:#475569;border-top:1px solid #1e293b;margin-top:8px}
-footer a{color:#10b981;text-decoration:none}
+footer{background:var(--red);color:rgba(255,255,255,.8);text-align:center;padding:14px;font-size:.78rem;margin-top:20px}
+footer a{color:rgba(255,255,255,.9);text-decoration:none;font-weight:600}
+/* Misc */
+.empty-photos{background:var(--gray-50);border:2px dashed var(--gray-200);border-radius:10px;padding:20px;text-align:center;color:var(--gray-600);font-size:.83rem;margin-top:8px;grid-column:1/-1}
 </style>
 </head>
 <body>
+
+<!-- HEADER -->
 <header>
-  <div>
-    <div class="h-title">⚡ Dashboard Operacional · Chilquinta Distribución</div>
-    <div class="h-sub">Martes 2 de junio de 2026 · Grupos: SGM (Mantenimiento) + Reporte SAT Costa MM · Solo junio 2026</div>
+  <div class="header-top">
+    <div class="header-logo">
+      <div class="logo-badge">CH</div>
+      <div class="header-title">
+        <h1>Chilquinta Distribución · Reporte Operacional</h1>
+        <p>Grupos WhatsApp: SGM (Mantenimiento) · Reporte SAT Costa MM · Solo junio 2026</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="date">Martes 2 de junio de 2026</div>
+      <div class="upd">⏱ Actualización automática · cada hora</div>
+    </div>
   </div>
-  <div class="h-right">
-    <div class="upd">⏱ Actualizado: 21:25 · cada hora</div>
-    <a class="gh-btn" href="https://friveraurbina-dot.github.io/sgmdistribucion/" target="_blank">🌐 GitHub Pages</a>
+  <div class="header-nav">
+    <button class="nav-tab active" onclick="showTab('mant',this)">🔧 Mantenimiento</button>
+    <button class="nav-tab" onclick="showTab('sat',this)">🚐 SAT</button>
+    <button class="nav-tab" onclick="showTab('charts',this)">📊 Gráficos</button>
+    <button class="nav-tab" onclick="showTab('sec',this)">⚖️ SEC</button>
+    <button class="nav-tab" onclick="showTab('photos',this)">📸 Fotos (16)</button>
   </div>
 </header>
 
 <div class="container">
 
-<!-- KPIs -->
-<div class="kpi-grid">
-  <div class="kpi kv-green"><div class="val">NORMAL</div><div class="lbl">Estado General</div></div>
-  <div class="kpi kv-amber"><div class="val">1</div><div class="lbl">Trabajos Activos</div></div>
-  <div class="kpi kv-blue"><div class="val">22</div><div class="lbl">Órdenes SAT</div></div>
-  <div class="kpi kv-red"><div class="val">3</div><div class="lbl">Incidentes SAT</div></div>
-  <div class="kpi kv-cyan"><div class="val">4</div><div class="lbl">Cuadrillas</div></div>
-  <div class="kpi kv-purple"><div class="val">13</div><div class="lbl">Fotos Junio</div></div>
-</div>
-
-<!-- Estado -->
-<div class="status-bar">
-  <div class="dot"></div>
-  <div class="status-text"><strong>ESTADO GENERAL: NORMAL</strong> · Zonas: San Antonio · Valparaíso · Marga Marga · Costa · Quillota · Aconcagua · Sin precipitaciones · Vientos &lt;39 km/h · Electrodependientes operando normalmente</div>
-</div>
-
-<!-- Clima + SEC -->
-<div class="grid2">
-
-  <!-- CLIMA -->
-  <div class="section">
-    <div class="sec-title">🌤 Pronóstico Meteorológico <span class="badge b-clima">CHQTA · Periodo 1–3 jun</span></div>
-    <div class="clima-grid">
-      <div class="zona-card"><div class="zona-name">⚓ Costa</div><div class="zona-temp">7–17°C</div><div class="zona-desc">Parcialmente nublado</div><div class="zona-wind">💨 &lt;39 km/h</div></div>
-      <div class="zona-card"><div class="zona-name">🏔 Aconcagua</div><div class="zona-temp">~28°C</div><div class="zona-desc">Despejado</div><div class="zona-wind">💨 Bajo umbral</div></div>
-      <div class="zona-card"><div class="zona-name">🌊 San Antonio</div><div class="zona-temp">8–16°C</div><div class="zona-desc">Normal</div><div class="zona-wind">💨 Sin alerta</div></div>
-      <div class="zona-card"><div class="zona-name">🏙 Valparaíso</div><div class="zona-temp">9–17°C</div><div class="zona-desc">Nublado</div><div class="zona-wind">💨 &lt;35 km/h</div></div>
-      <div class="zona-card"><div class="zona-name">🌿 Quillota</div><div class="zona-temp">10–22°C</div><div class="zona-desc">Despejado</div><div class="zona-wind">💨 Calma</div></div>
-      <div class="zona-card"><div class="zona-name">🏞 Marga Marga</div><div class="zona-temp">8–18°C</div><div class="zona-desc">Nublado</div><div class="zona-wind">💨 Sin alerta</div></div>
+  <!-- ===== MANTENIMIENTO ===== -->
+  <div id="tab-mant" class="tab-content active">
+    <div class="status-banner">
+      <div class="status-dot"></div>
+      <div class="status-text"><strong>ESTADO GENERAL: NORMAL</strong> · Todas las zonas operando dentro de parámetros · Vientos &lt;39 km/h · Electrodependientes OK · Sin precipitaciones</div>
     </div>
-    <div class="clima-summary">
-      📋 <strong>Resumen CHQTA:</strong> Sin precipitaciones relevantes pronosticadas · Vientos sostenidos bajo umbrales de alerta en todas las zonas · <strong>No se identifican riesgos meteorológicos operacionales</strong> para el período evaluado.<br>
-      <span style="font-size:.75rem;color:#0ea5e9;margin-top:4px;display:block">Fuente: Reporte Operacional CHQTA — Jorge Torres Chqta · 1 junio 2026</span>
+    <div class="kpi-grid">
+      <div class="kpi k-red"><div class="val">NORMAL</div><div class="lbl">Estado General</div></div>
+      <div class="kpi k-amber"><div class="val">1</div><div class="lbl">Trabajos Activos</div></div>
+      <div class="kpi k-blue"><div class="val">22</div><div class="lbl">Órdenes SAT Hoy</div></div>
+      <div class="kpi k-red"><div class="val">3</div><div class="lbl">Incidentes SAT</div></div>
+      <div class="kpi k-green"><div class="val">4</div><div class="lbl">Cuadrillas Activas</div></div>
+      <div class="kpi k-blue"><div class="val">16</div><div class="lbl">Fotos Capturadas</div></div>
     </div>
-  </div>
-
-  <!-- SEC -->
-  <div class="section">
-    <div class="sec-title">⚖️ SEC · Superintendencia de Electricidad <span class="badge b-sec">Alertas</span></div>
-
-    <div class="sec-item">
-      <div class="sec-item-tag">🔴 Alerta Temporada Invierno</div>
-      <div class="sec-item-title">SEC fiscaliza venta de estufas y calefactores ante llegada del frío — Zona Central</div>
-      <div class="sec-item-body">Campaña de fiscalización de equipos de calefacción en zona central del país, incluyendo Región de Valparaíso. Relevante para operación en sectores residenciales con mayor demanda eléctrica por calefacción.</div>
-    </div>
-
-    <div class="sec-item" style="border-left-color:#2563eb">
-      <div class="sec-item-tag" style="background:#1e3a8a;color:#93c5fd">📋 Planes SEC 2026</div>
-      <div class="sec-item-title">Reporte_Planes_SEC_2026 — Revisión 28/05/2026</div>
-      <div class="sec-item-body">Documento de planes SEC 2026 compartido en grupo SGM por Alejandro Saavedra. Versión 8 distribuida para revisión del equipo de distribución Chilquinta.</div>
-    </div>
-
-    <div class="sec-item" style="border-left-color:#0891b2">
-      <div class="sec-item-tag" style="background:#0e4a66;color:#67e8f9">📊 Electrodependientes</div>
-      <div class="sec-item-title">Despacho Electrodependientes — Operación Normal</div>
-      <div class="sec-item-body">Jorge Torres Chqta confirmó el 1/6: despacho electrodependientes operando normalmente en las 6 zonas. Cambio de turno a las 00:00 hrs sin incidentes reportados.</div>
-    </div>
-
-    <div class="sec-item" style="border-left-color:#d97706">
-      <div class="sec-item-tag" style="background:#78350f;color:#fcd34d">🌊 Sismo Informado</div>
-      <div class="sec-item-title">Informe Preliminar Sismo M 5.8 — 31/05/2026 17:34</div>
-      <div class="sec-item-body">Coord: Lat -32.77 Lon -71.82 · Profundidad 30 km · 28 km al O de Quintero · Reportado por Juan Carlos Jaque Chqta vía SSN. Sin daños en red informados post-evento.</div>
+    <div class="section-card">
+      <div class="section-header">
+        <h2>🔧 Actividades de Mantenimiento</h2>
+        <span class="section-badge b-red">SGM · Junio 2026</span>
+      </div>
+      <div class="work-card activo">
+        <div class="wc-header"><span class="wc-tag tag-activo">EN PROGRESO</span><span class="wc-time">01/06 · 10:27</span></div>
+        <div class="wc-author">👤 Rodrigo Canihuante</div>
+        <div class="wc-text">En ejecución <strong>reemplazo de cruceta</strong> en alimentador Quilpué, aguas abajo de Rec Roosevelt Berna. Caso puntual y particular. Apoyo de SIMANTEC, supervisado en terreno por Mtto y EH&amp;S.</div>
+      </div>
+      <div class="work-card info">
+        <div class="wc-header"><span class="wc-tag tag-info">OPERACIONAL</span><span class="wc-time">02/06 · 10:41</span></div>
+        <div class="wc-author">👤 Juan Carlos Jaque Chqta</div>
+        <div class="wc-text"><strong>Mesa de trabajo con Municipalidad de La Cruz</strong> (José Guerrero y Alexis Palacios). Temas tratados: variaciones de voltaje, aumentos de capacidad de consumos Municipalidad, poda y nuevas urbanizaciones.</div>
+      </div>
+      <div class="work-card info">
+        <div class="wc-header"><span class="wc-tag tag-info">OPERACIONAL</span><span class="wc-time">02/06 · 10:48</span></div>
+        <div class="wc-author">👤 Hernan Chqta</div>
+        <div class="wc-text"><strong>Capacitación Análisis de Falla:</strong> Mantenimiento – Obras – Filiales – Operación. Sesión presencial con equipos de todas las áreas.</div>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Mantenimiento + SAT -->
-<div class="grid2">
-  <div class="section">
-    <div class="sec-title">🔧 Mantenimiento <span class="badge b-mant">SGM · Grupo WhatsApp</span></div>
-    <div class="msg-card" style="border-left-color:#f59e0b">
-  <div class="msg-hdr"><span class="msg-tag" style="background:#f59e0b">EN PROGRESO</span><span class="msg-time">01/06 10:27</span></div>
-  <div class="msg-author">👤 Rodrigo Canihuante</div>
-  <div class="msg-text">En ejecución reemplazo de cruceta en alimentador Quilpué, aguas abajo de Rec Roosevelt Berna. Apoyo SIMANTEC, supervisado por Mtto y EH&S.</div>
-</div><div class="msg-card" style="border-left-color:#475569">
-  <div class="msg-hdr"><span class="msg-tag" style="background:#475569">OPERACIONAL</span><span class="msg-time">02/06 10:41</span></div>
-  <div class="msg-author">👤 Juan Carlos Jaque Chqta</div>
-  <div class="msg-text">Mesa de trabajo con Municipalidad de La Cruz (J.Guerrero y A.Palacios). Temas: variaciones de voltaje, aumentos de capacidad, poda y nuevas urbanizaciones.</div>
-</div><div class="msg-card" style="border-left-color:#475569">
-  <div class="msg-hdr"><span class="msg-tag" style="background:#475569">OPERACIONAL</span><span class="msg-time">02/06 10:48</span></div>
-  <div class="msg-author">👤 Hernan Chqta</div>
-  <div class="msg-text">Capacitación Análisis de Falla: Mantenimiento – Obras – Filiales – Operación.</div>
-</div>
-  </div>
-
-  <div class="section">
-    <div class="sec-title">🚐 SAT <span class="badge b-sat">Reporte SAT Costa MM</span></div>
-    <div class="turno-grid">
-      <div class="turno-card"><div class="turno-zona">Quintero · SJHZ-76</div><div class="turno-tec">G.Cataldo / E.Foncea</div><div class="turno-pat">07:00–15:00</div><div class="turno-ord">DOM:2 | RED:0 | AUTOG:1</div></div>
-      <div class="turno-card"><div class="turno-zona">Costa · SVTW61</div><div class="turno-tec">M.Montenegro / G.Herrera</div><div class="turno-pat">15:00–23:00</div><div class="turno-ord">DOM:2 | RED:0</div></div>
-      <div class="turno-card"><div class="turno-zona">Marga Marga · SSGF-99</div><div class="turno-tec">D.Bastien / S.Mena</div><div class="turno-pat">16:00–20:00</div><div class="turno-ord">DOM:9 | RED:1</div></div>
-      <div class="turno-card"><div class="turno-zona">Costa · VRTY63</div><div class="turno-tec">D.Donoso / M.Olivares</div><div class="turno-pat">15:00–23:00</div><div class="turno-ord">DOM:3 | RED:0 | PRES:1</div></div>
-      <div class="turno-card"><div class="turno-zona">SAT MM · SSFW61</div><div class="turno-tec">F.Fariña / C.Perez</div><div class="turno-pat">Turno AM</div><div class="turno-ord">DOM:6 | RED:1</div></div>
+  <!-- ===== SAT ===== -->
+  <div id="tab-sat" class="tab-content">
+    <div class="section-card">
+      <div class="section-header">
+        <h2>🚐 Servicio de Atención Técnica · SAT Costa MM</h2>
+        <span class="section-badge b-blue">Reporte SAT · Junio 2026</span>
+      </div>
+      <div class="turno-grid">
+        <div class="turno-card"><div class="turno-zona">Quintero · SJHZ-76</div><div class="turno-tec">G.Cataldo / E.Foncea</div><div class="turno-pat">07:00–15:00</div><div class="turno-ord">DOM:2 | RED:0 | AUTOG:1 | PRES:1</div></div>
+        <div class="turno-card"><div class="turno-zona">Costa · SJHZ76</div><div class="turno-tec">J.Almendares / J.Muñoz</div><div class="turno-pat">15:00–23:00</div><div class="turno-ord">Bipersonal</div></div>
+        <div class="turno-card"><div class="turno-zona">Costa · SVTW61</div><div class="turno-tec">M.Montenegro / G.Herrera</div><div class="turno-pat">15:00–23:00</div><div class="turno-ord">DOM:2 | RED:0</div></div>
+        <div class="turno-card"><div class="turno-zona">Marga Marga · SSGF-99</div><div class="turno-tec">D.Bastien / S.Mena</div><div class="turno-pat">16:00–20:00</div><div class="turno-ord">DOM:9 | RED:1</div></div>
+        <div class="turno-card"><div class="turno-zona">Costa · VRTY63</div><div class="turno-tec">D.Donoso / M.Olivares</div><div class="turno-pat">15:00–23:00</div><div class="turno-ord">DOM:3 | RED:0 | PRES:1</div></div>
+        <div class="turno-card"><div class="turno-zona">SAT MM · SSFW61</div><div class="turno-tec">F.Fariña / C.Perez</div><div class="turno-pat">Turno AM</div><div class="turno-ord">DOM:6 | RED:1 | ELECTRO:0</div></div>
+      </div>
+      <div class="sat-row inc"><span class="sat-badge" style="background:#DC2626">INCIDENTE</span><span class="sat-time">11:09</span><span class="sat-auth">Costa</span><span class="sat-text">Po 1606945 · SED 20192 Santa Margarita Tres · Causa: manejo de vegetación · Probatorias FS: SI</span></div>
+      <div class="sat-row inc"><span class="sat-badge" style="background:#DC2626">INCIDENTE</span><span class="sat-time">12:35</span><span class="sat-auth">Costa</span><span class="sat-text">Po 1606971 · 24080 Parque Pinares · Rótulo 73474660 · Causa: falta mantenimiento · Tripolar auxiliar fase azul BT</span></div>
+      <div class="sat-row"><span class="sat-badge" style="background:#4B5563">OPER.</span><span class="sat-time">15:17</span><span class="sat-auth">Quintero SJHZ-76</span><span class="sat-text">FIN TURNO · G.Cataldo / E.Foncea · DOM:2 | RED:0 | AUTOG:1 | PRES:1</span></div>
+      <div class="sat-row inc"><span class="sat-badge" style="background:#DC2626">INCIDENTE</span><span class="sat-time">15:35</span><span class="sat-auth">Costa SJHZ-76</span><span class="sat-text">Po 1607023 · SED 21603 Los Peumos Las Violeta Circ.B · Apertura 14:35 → Cierre 15:20 NH 200kVA · Neutro cortado rótulos 722510–722391</span></div>
+      <div class="sat-row"><span class="sat-badge" style="background:#4B5563">OPER.</span><span class="sat-time">15:56</span><span class="sat-auth">Costa SJHZ76</span><span class="sat-text">INICIO TURNO · J.Almendares / J.Muñoz · 15:00–23:00 · Bipersonal</span></div>
+      <div class="sat-row"><span class="sat-badge" style="background:#4B5563">OPER.</span><span class="sat-time">16:02</span><span class="sat-auth">M.Marga SSGF-99</span><span class="sat-text">FIN TURNO · D.Bastien / S.Mena · DOM:9 | RED:1 | AUTOG:0 | PRES:0</span></div>
+      <div class="sat-row"><span class="sat-badge" style="background:#4B5563">OPER.</span><span class="sat-time">16:06</span><span class="sat-auth">M.Marga SSGF99</span><span class="sat-text">INICIO TURNO VINISE · L.Velásquez / S.Mena · 16:00–20:00 · Bipersonal</span></div>
+      <div class="sat-row ok"><span class="sat-badge" style="background:#16a34a">COMPLETADO</span><span class="sat-time">16:42</span><span class="sat-auth">SAT MM</span><span class="sat-text">Po 1607076 · Av. Santa Julia / Las Violetas · Rotura conductor por viento · Reparación SIN corte de suministro ✓</span></div>
+      <div class="sat-row"><span class="sat-badge" style="background:#4B5563">OPER.</span><span class="sat-time">16:45</span><span class="sat-auth">SAT MM · SSFW61</span><span class="sat-text">FIN TURNO · F.Fariña / C.Perez · DOM:6 | RED:1 | ELECTRO:0</span></div>
     </div>
-    <div class="sat-feed"><div class="sat-row incidente">
-  <span class="sat-badge" style="background:#ef4444">INCIDENTE</span>
-  <span class="sat-time">11:09</span>
-  <span class="sat-author">Costa</span>
-  <span class="sat-text">Reporte Interrupción · Po 1606945 · SED 20192 Santa Margarita Tres · Causa: manejo de vegetación · FS: SI</span>
-</div><div class="sat-row incidente">
-  <span class="sat-badge" style="background:#ef4444">INCIDENTE</span>
-  <span class="sat-time">12:35</span>
-  <span class="sat-author">Costa</span>
-  <span class="sat-text">Reporte Interrupción · Po 1606971 · 24080 Parque Pinares · Rótulo 73474660 · Causa: falta mantenimiento · Tripolar auxiliar fase azul BT</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">15:17</span>
-  <span class="sat-author">Quintero SJHZ-76</span>
-  <span class="sat-text">FIN TURNO · G.Cataldo / E.Foncea · DOM:2 | RED:0 | ELECTRO:0 | AUTOG:1 | PRES:1</span>
-</div><div class="sat-row incidente">
-  <span class="sat-badge" style="background:#ef4444">INCIDENTE</span>
-  <span class="sat-time">15:35</span>
-  <span class="sat-author">Costa SJHZ-76</span>
-  <span class="sat-text">Reporte Interrupción · Po 1607023 · SED 21603 Los Peumos Las Violeta Circ.B · Apertura 14:35 → Cierre 15:20 NH 200kVA · Neutro cortado rótulos 722510–722391</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">15:56</span>
-  <span class="sat-author">Costa SJHZ76</span>
-  <span class="sat-text">INICIO TURNO · J.Almendares / J.Muñoz · Zona Costa · 15:00–23:00 · Bipersonal</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">15:58</span>
-  <span class="sat-author">Costa SVTW61</span>
-  <span class="sat-text">FIN TURNO · C.Mura / J.Silva · DOM:2 | RED:0 | ELECTRO:0</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:01</span>
-  <span class="sat-author">Costa SVTW61</span>
-  <span class="sat-text">INICIO TURNO · M.Montenegro / G.Herrera · 15:00–23:00 · Bipersonal</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:02</span>
-  <span class="sat-author">Marga Marga SSGF-99</span>
-  <span class="sat-text">FIN TURNO · D.Bastien / S.Mena · DOM:9 | RED:1 | AUTOG:0 | PRES:0</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:02</span>
-  <span class="sat-author">Costa VRTY63</span>
-  <span class="sat-text">INICIO TURNO · M.Silva / A.Silva · Zona Costa · 07:00–15:00 · Bipersonal</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:03</span>
-  <span class="sat-author">Costa VRTY63</span>
-  <span class="sat-text">FIN TURNO · M.Silva / A.Silva · DOM:3 | RED:0 | PRES:1</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:06</span>
-  <span class="sat-author">Marga Marga SSGF99</span>
-  <span class="sat-text">INICIO TURNO VINISE · L.Velásquez / S.Mena · Zona Marga Marga · 16:00–20:00 · Bipersonal</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:06</span>
-  <span class="sat-author">Costa VRTY63</span>
-  <span class="sat-text">INICIO TURNO · D.Donoso / M.Olivares · 15:00–23:00 · Bipersonal</span>
-</div><div class="sat-row ok">
-  <span class="sat-badge" style="background:#10b981">COMPLETADO</span>
-  <span class="sat-time">16:42</span>
-  <span class="sat-author">SAT MM</span>
-  <span class="sat-text">Sin Interrupción · Po 1607076 · Av. Santa Julia / Las Violetas · Rotura conductor por viento · Reparación SIN corte de suministro ✓</span>
-</div><div class="sat-row">
-  <span class="sat-badge" style="background:#475569">OPERACIONAL</span>
-  <span class="sat-time">16:45</span>
-  <span class="sat-author">SAT MM · SSFW61</span>
-  <span class="sat-text">FIN TURNO · F.Fariña / C.Perez · DOM:6 | RED:1 | ELECTRO:0 | AUTOG:0</span>
-</div></div>
   </div>
-</div>
 
-<!-- Fotos -->
-<div class="section">
-  <div class="sec-title">📸 Galería de Fotos · Junio 2026
-    <span class="badge" style="background:#374151;color:#9ca3af">13 fotos · SGM + SAT</span>
-    <span style="font-size:.73rem;color:#64748b;font-weight:400;margin-left:4px">📱 Fotos originales en WhatsApp — visualización en sesión activa</span>
+  <!-- ===== CHARTS ===== -->
+  <div id="tab-charts" class="tab-content">
+    <div class="chart-grid">
+      <!-- SAT Orders Chart -->
+      <div class="chart-box">
+        <div class="chart-title">📊 Órdenes SAT por Tipo — 2 junio 2026</div>
+        <div class="chart-wrap"><canvas id="chartOrders"></canvas></div>
+      </div>
+      <!-- SAT by Zone -->
+      <div class="chart-box">
+        <div class="chart-title">🗺️ Distribución Órdenes por Zona/Cuadrilla</div>
+        <div class="chart-wrap"><canvas id="chartZones"></canvas></div>
+      </div>
+      <!-- Weather Chart -->
+      <div class="chart-box">
+        <div class="chart-title">🌡️ Pronóstico Temperatura por Zona — CHQTA jun 2026</div>
+        <div class="chart-wrap"><canvas id="chartWeather"></canvas></div>
+      </div>
+      <!-- Incidents -->
+      <div class="chart-box">
+        <div class="chart-title">⚠️ Resumen Incidentes — Junio 2026</div>
+        <div class="chart-wrap"><canvas id="chartIncidents"></canvas></div>
+      </div>
+    </div>
+    <!-- Weather detail -->
+    <div class="section-card">
+      <div class="section-header"><h2>🌤 Pronóstico Meteorológico CHQTA · Período 1–3 junio</h2><span class="section-badge b-blue">Estado: SIN RIESGO</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">⚓ Costa</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">7–17°C</div><div style="font-size:.72rem;color:#4b5563">💨 &lt;39 km/h</div></div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">🏔 Aconcagua</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">~28°C</div><div style="font-size:.72rem;color:#4b5563">💨 Sin alerta</div></div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">🌊 San Antonio</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">8–16°C</div><div style="font-size:.72rem;color:#4b5563">💨 Normal</div></div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">🏙 Valparaíso</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">9–17°C</div><div style="font-size:.72rem;color:#4b5563">💨 &lt;35 km/h</div></div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">🌿 Quillota</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">10–22°C</div><div style="font-size:.72rem;color:#4b5563">💨 Calma</div></div>
+        <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;padding:12px;text-align:center"><div style="font-size:.65rem;font-weight:700;color:#0369a1;text-transform:uppercase">🏞 Marga Marga</div><div style="font-size:1.3rem;font-weight:800;margin:4px 0">8–18°C</div><div style="font-size:.72rem;color:#4b5563">💨 Sin alerta</div></div>
+      </div>
+      <div style="margin-top:12px;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;font-size:.82rem;color:#166534">
+        📋 <strong>Resumen CHQTA (Jorge Torres · 1 jun):</strong> Sin precipitaciones relevantes · Vientos sostenidos bajo umbrales en todas las zonas · <strong>No se identifican riesgos meteorológicos operacionales</strong>
+      </div>
+    </div>
   </div>
-  <div class="photo-grid">
-    <div class="photo-card" style="background:linear-gradient(135deg,#005e3a,#10b981)" title="Rodrigo Canihuante — Reemplazo cruceta alimentador Quilpué">
-  <div class="photo-icon">🔧</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">Mantenimiento</div>
-    <div class="photo-autor">Rodrigo Canihuante</div>
-    <div class="photo-desc">Reemplazo cruceta alimentador Quilpué</div>
-    <div class="photo-time">🕐 10:27</div>
+
+  <!-- ===== SEC ===== -->
+  <div id="tab-sec" class="tab-content">
+    <div class="section-card">
+      <div class="section-header"><h2>⚖️ Superintendencia de Electricidad y Combustibles</h2><span class="section-badge b-red">SEC · Alertas vigentes</span></div>
+      <div class="sec-item">
+        <span class="sec-tag t-red">🔴 Alerta Invierno</span>
+        <div class="sec-title">SEC fiscaliza estufas y calefactores — Llegada del frío zona central</div>
+        <div class="sec-body">Campaña activa de fiscalización de equipos de calefacción en Región de Valparaíso. Se espera mayor demanda eléctrica residencial. Relevante para operación en sectores residenciales de las zonas Costa, Valparaíso y Marga Marga.</div>
+      </div>
+      <div class="sec-item amber">
+        <span class="sec-tag t-amber">🌊 Sismo Informado</span>
+        <div class="sec-title">Informe Preliminar Sismo M 5.8 — 31/05/2026 17:34 hrs</div>
+        <div class="sec-body">Lat: -32.77 / Lon: -71.82 · Profundidad 30 km · 28 km al Oeste de Quintero · Retardo: 3.92 min. Reportado por Juan Carlos Jaque Chqta vía SSN. <strong>Sin daños en red reportados post-evento.</strong></div>
+      </div>
+      <div class="sec-item blue">
+        <span class="sec-tag t-blue">📋 Planes 2026</span>
+        <div class="sec-title">Reporte_Planes_SEC_2026 — Revisión 28/05/2026 (v8)</div>
+        <div class="sec-body">Documento de planes SEC 2026 distribuido en grupo SGM por Alejandro Saavedra. Versión 8 vigente para revisión del equipo de distribución Chilquinta.</div>
+      </div>
+      <div class="sec-item green">
+        <span class="sec-tag t-green">📊 Electrodependientes</span>
+        <div class="sec-title">Despacho Electrodependientes — Estado Normal</div>
+        <div class="sec-body">Confirmado por Jorge Torres Chqta (1/6): despacho electrodependientes operando normalmente en las <strong>6 zonas</strong>. Cambio de turno 00:00 hrs sin incidentes reportados.</div>
+      </div>
+    </div>
   </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#005e3a,#10b981)" title="Rodrigo Canihuante — Reemplazo cruceta alimentador Quilpué (2)">
-  <div class="photo-icon">🔧</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">Mantenimiento</div>
-    <div class="photo-autor">Rodrigo Canihuante</div>
-    <div class="photo-desc">Reemplazo cruceta alimentador Quilpué (2)</div>
-    <div class="photo-time">🕐 10:27</div>
+
+  <!-- ===== FOTOS ===== -->
+  <div id="tab-photos" class="tab-content">
+    <div class="section-card">
+      <div class="section-header">
+        <h2>📸 Galería de Fotos · Junio 2026</h2>
+        <span class="section-badge b-red">16 fotos · Mantenimiento + SAT</span>
+      </div>
+      <div id="photo-gallery" class="photo-grid">
+        <!-- Photos injected by JS -->
+        <div class="empty-photos" id="photo-loading">⏳ Cargando fotos desde WhatsApp...</div>
+      </div>
+    </div>
   </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#005e3a,#10b981)" title="Juan Carlos Jaque Chqta — Mesa trabajo Municipalidad La Cruz">
-  <div class="photo-icon">🔧</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">Mantenimiento</div>
-    <div class="photo-autor">Juan Carlos Jaque Chqta</div>
-    <div class="photo-desc">Mesa trabajo Municipalidad La Cruz</div>
-    <div class="photo-time">🕐 10:41</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#005e3a,#10b981)" title="Hernan Chqta — Capacitación Análisis de Falla">
-  <div class="photo-icon">🔧</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">Mantenimiento</div>
-    <div class="photo-autor">Hernan Chqta</div>
-    <div class="photo-desc">Capacitación Análisis de Falla</div>
-    <div class="photo-time">🕐 10:48</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT VINISE SSGF-99 — Operación en terreno VINISE">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT VINISE SSGF-99</div>
-    <div class="photo-desc">Operación en terreno VINISE</div>
-    <div class="photo-time">🕐 15:34</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT SJHZ-76 — Trabajo en campo SJHZ-76 (1)">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT SJHZ-76</div>
-    <div class="photo-desc">Trabajo en campo SJHZ-76 (1)</div>
-    <div class="photo-time">🕐 15:36</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT SJHZ-76 — Trabajo en campo SJHZ-76 (2)">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT SJHZ-76</div>
-    <div class="photo-desc">Trabajo en campo SJHZ-76 (2)</div>
-    <div class="photo-time">🕐 15:36</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT SJHZ-76 — Trabajo en campo SJHZ-76 (3)">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT SJHZ-76</div>
-    <div class="photo-desc">Trabajo en campo SJHZ-76 (3)</div>
-    <div class="photo-time">🕐 15:36</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT SJHZ-76 — Trabajo en campo SJHZ-76 (4)">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT SJHZ-76</div>
-    <div class="photo-desc">Trabajo en campo SJHZ-76 (4)</div>
-    <div class="photo-time">🕐 15:36</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT MM ~SAT MM~ — Reporte sin interrupción – reparación">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT MM ~SAT MM~</div>
-    <div class="photo-desc">Reporte sin interrupción – reparación</div>
-    <div class="photo-time">🕐 16:42</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT MM ~SAT MM~ — Reparación conductor (detalle)">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT MM ~SAT MM~</div>
-    <div class="photo-desc">Reparación conductor (detalle)</div>
-    <div class="photo-time">🕐 16:42</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT MM ~SAT MM~ — Equipo SAT MM en terreno">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT MM ~SAT MM~</div>
-    <div class="photo-desc">Equipo SAT MM en terreno</div>
-    <div class="photo-time">🕐 16:42</div>
-  </div>
-</div><div class="photo-card" style="background:linear-gradient(135deg,#1e3a8a,#3b82f6)" title="SAT MM ~SAT MM~ — Trabajo finalizado sin corte">
-  <div class="photo-icon">🚐</div>
-  <div class="photo-meta">
-    <div class="photo-grupo">SAT</div>
-    <div class="photo-autor">SAT MM ~SAT MM~</div>
-    <div class="photo-desc">Trabajo finalizado sin corte</div>
-    <div class="photo-time">🕐 16:42</div>
-  </div>
-</div>
-    <div class="photo-note">📱 <strong>Fotos de alta resolución</strong> disponibles en los grupos de WhatsApp <strong>SGM</strong> y <strong>Reporte SAT Costa_MM</strong> · 4 fotos Mantenimiento · 9 fotos SAT</div>
-  </div>
-</div>
 
 </div><!-- /container -->
 
+<!-- LIGHTBOX -->
+<div id="lb" onclick="if(event.target===this)closeLB()">
+  <button id="lb-close" onclick="closeLB()">×</button>
+  <button id="lb-prev" onclick="navLB(-1)">&#8249;</button>
+  <img id="lb-img" src="" alt=""/>
+  <button id="lb-next" onclick="navLB(1)">&#8250;</button>
+  <div id="lb-caption"></div>
+</div>
+
 <footer>
-  Dashboard SGM · Chilquinta Distribución ·
-  <a href="https://friveraurbina-dot.github.io/sgmdistribucion/" target="_blank">friveraurbina-dot.github.io/sgmdistribucion</a>
-  · Junio 2026 · Actualización automática cada hora
+  Chilquinta Distribución · Reporte Operacional Automático · 
+  <a href="https://friveraurbina-dot.github.io/sgmdistribucion/" target="_blank">friveraurbina-dot.github.io/sgmdistribucion</a> · Solo junio 2026
 </footer>
+
+<script>
+// TABS
+function showTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+}
+
+// CHARTS
+const RED='#DA291C', REDL='rgba(218,41,28,0.15)', BLUE='#1d4ed8', BLUEL='rgba(29,78,216,0.15)';
+const GREEN='#16a34a', AMBER='#d97706';
+
+Chart.defaults.font.family = "-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
+Chart.defaults.font.size = 11;
+
+// 1. Orders by type
+new Chart(document.getElementById('chartOrders'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Domiciliaria (DOM)','Red (RED)','Electrodep.','Autogestión','Presentación'],
+    datasets: [{data:[22,3,0,1,2],backgroundColor:[RED,BLUE,'#6b7280',AMBER,GREEN],borderWidth:2,borderColor:'#fff'}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,padding:8}}}}
+});
+
+// 2. By zone
+new Chart(document.getElementById('chartZones'), {
+  type: 'bar',
+  data: {
+    labels: ['Quintero
+SJHZ-76','Costa
+SJHZ76','Costa
+SVTW61','M.Marga
+SSGF-99','Costa
+VRTY63','SAT MM
+SSFW61'],
+    datasets: [{label:'DOM',data:[2,0,2,9,3,6],backgroundColor:RED},{label:'RED',data:[0,0,0,1,0,1],backgroundColor:BLUE}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,ticks:{stepSize:1}}},plugins:{legend:{position:'top'}}}
+});
+
+// 3. Weather
+new Chart(document.getElementById('chartWeather'), {
+  type: 'bar',
+  data: {
+    labels: ['Costa','Aconcagua','San Antonio','Valparaíso','Quillota','Marga Marga'],
+    datasets: [
+      {label:'Mín (°C)',data:[7,10,8,9,10,8],backgroundColor:'rgba(29,78,216,0.6)',borderRadius:4},
+      {label:'Máx (°C)',data:[17,28,16,17,22,18],backgroundColor:'rgba(218,41,28,0.6)',borderRadius:4}
+    ]
+  },
+  options: {responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true,title:{display:true,text:'°C'}}},plugins:{legend:{position:'top'}}}
+});
+
+// 4. Incidents
+new Chart(document.getElementById('chartIncidents'), {
+  type: 'bar',
+  data: {
+    labels: ['Manejo
+Vegetación','Falta
+Mant.','Neutro
+Cortado','Sin Corte
+(reparado)'],
+    datasets: [{label:'Incidentes',data:[1,1,1,1],backgroundColor:[RED,RED,RED,GREEN],borderRadius:6}]
+  },
+  options: {responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}
+});
+
+// PHOTOS
+window._photos = [];
+let _lbIdx = 0;
+
+function loadPhotos(photoArr) {
+  window._photos = photoArr;
+  const gallery = document.getElementById('photo-gallery');
+  const loading = document.getElementById('photo-loading');
+  if (loading) loading.remove();
+  photoArr.forEach((p,i) => {
+    const div = document.createElement('div');
+    div.className = 'photo-card';
+    div.onclick = () => openLB(i);
+    div.innerHTML = '<img class="photo-thumb" src="'+p.b64+'" alt="'+p.desc+'" loading="lazy">' +
+      '<div class="photo-info"><div class="photo-grupo '+(p.grupo==='Mantenimiento'?'mant':'sat')+'">'+(p.grupo==='Mantenimiento'?'🔧 Mantenimiento':'🚐 SAT')+'</div>' +
+      '<div class="photo-autor">'+p.autor+'</div><div class="photo-time">'+p.time+'</div></div>';
+    gallery.appendChild(div);
+  });
+}
+
+function openLB(idx) {
+  _lbIdx = idx;
+  const p = window._photos[idx];
+  document.getElementById('lb-img').src = p.b64;
+  document.getElementById('lb-caption').innerHTML = '<strong>'+p.autor+'</strong> · '+p.desc+' · '+p.time+' &nbsp; ('+((idx+1))+'/'+window._photos.length+')';
+  document.getElementById('lb').classList.add('on');
+  document.addEventListener('keydown', lbKey);
+}
+function closeLB(){document.getElementById('lb').classList.remove('on');document.removeEventListener('keydown',lbKey);}
+function navLB(d){openLB((_lbIdx+d+window._photos.length)%window._photos.length);}
+
+// Load SVG photo placeholders
+loadPhotos([{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNEQTI5MUMiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5SnPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+Um9kcmlnbyBDYW5paHVhbnRlPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMjciIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC44NSkiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPlJlZW1wbGF6byBjcnVjZXRhIFF1aWwuLi48L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjE0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjcpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj4wMS8wNiAxMDoyNzwvdGV4dD4KPC9zdmc+",autor:"Rodrigo Canihuante",desc:"Reemplazo cruceta Quilpué",tiempo:"01/06 10:27",grupo:"Mantenimiento"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNEQTI5MUMiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5SnPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+Um9kcmlnbyBDYW5paHVhbnRlPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMjciIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC44NSkiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkNydWNldGEgUXVpbHB1w6kgKDIpPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MDEvMDYgMTA6Mjc8L3RleHQ+Cjwvc3ZnPg==",autor:"Rodrigo Canihuante",desc:"Cruceta Quilpué (2)",tiempo:"01/06 10:27",grupo:"Mantenimiento"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNEQTI5MUMiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5ONPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+SnVhbiBDYXJsb3MgSmFxdWU8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjEyNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjg1KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+TWVzYSB0cmFiYWpvIE11bmljaXBhbC4uLjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDEwOjQxPC90ZXh0Pgo8L3N2Zz4=",autor:"Juan Carlos Jaque",desc:"Mesa trabajo Municipalidad La Cruz",tiempo:"02/06 10:41",grupo:"Mantenimiento"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiNEQTI5MUMiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn46TPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+SGVybmFuIENocXRhPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMjciIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC44NSkiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPkNhcGFjaXRhY2nDs24gQW7DoWxpc2lzIC4uLjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDEwOjQ4PC90ZXh0Pgo8L3N2Zz4=",autor:"Hernan Chqta",desc:"Capacitación Análisis de Falla",tiempo:"02/06 10:48",grupo:"Mantenimiento"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5qQPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+U0FUIFZJTklTRSBTU0dGLTk5PC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMjciIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC44NSkiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPk9wZXJhY2nDs24gVklOSVNFPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MDIvMDYgMTU6MzQ8L3RleHQ+Cjwvc3ZnPg==",autor:"SAT VINISE SSGF-99",desc:"Operación VINISE",tiempo:"02/06 15:34",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICgxKTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (1)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICgyKTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (2)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICgzKTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (3)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICg0KTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (4)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICg1KTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (5)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7imqE8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5TQVQgU0pIWi03NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5UcmFiYWpvIGNhbXBvICg2KTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE1OjM2PC90ZXh0Pgo8L3N2Zz4=",autor:"SAT SJHZ-76",desc:"Trabajo campo (6)",tiempo:"02/06 15:36",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5SMPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+flNBVCBNTX48L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjEyNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjg1KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+UmVwYXJhY2nDs24gUG8gMTYwNzA3NjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE2OjQyPC90ZXh0Pgo8L3N2Zz4=",autor:"~SAT MM~",desc:"Reparación Po 1607076",tiempo:"02/06 16:42",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5SMPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+flNBVCBNTX48L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjEyNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjg1KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+UmVwYXJhY2nDs24gY29uZHVjdG9yPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MDIvMDYgMTY6NDI8L3RleHQ+Cjwvc3ZnPg==",autor:"~SAT MM~",desc:"Reparación conductor",tiempo:"02/06 16:42",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5SMPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+flNBVCBNTX48L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjEyNyIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjg1KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+RXF1aXBvIFNBVCBNTTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNykiIGZvbnQtc2l6ZT0iOCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiPjAyLzA2IDE2OjQyPC90ZXh0Pgo8L3N2Zz4=",autor:"~SAT MM~",desc:"Equipo SAT MM",tiempo:"02/06 16:42",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7inIU8L3RleHQ+CiAgPHRleHQgeD0iODAiIHk9IjExNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iOSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtd2VpZ2h0PSJib2xkIj5+U0FUIE1NfjwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5TaW4gY29ydGUg4pyTPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MDIvMDYgMTY6NDI8L3RleHQ+Cjwvc3ZnPg==",autor:"~SAT MM~",desc:"Sin corte ✓",tiempo:"02/06 16:42",grupo:"SAT"},
+{b64:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTYwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxNjAiIGZpbGw9IiMxZDRlZDgiIHJ4PSI0Ii8+CiAgPHJlY3QgeD0iMCIgeT0iMTAwIiB3aWR0aD0iMTYwIiBoZWlnaHQ9IjYwIiBmaWxsPSJyZ2JhKDAsMCwwLDAuMzUpIiByeD0iMCIvPgogIDx0ZXh0IHg9IjgwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj7wn5qQPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjkiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCI+U0FUIE1NIFNTRlc2MTwvdGV4dD4KICA8dGV4dCB4PSI4MCIgeT0iMTI3IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuODUpIiBmb250LXNpemU9IjgiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIj5DdWFkcmlsbGEgU0FUIE1NPC90ZXh0PgogIDx0ZXh0IHg9IjgwIiB5PSIxNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC43KSIgZm9udC1zaXplPSI4IiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiI+MDIvMDYgMTc6MzQ8L3RleHQ+Cjwvc3ZnPg==",autor:"SAT MM SSFW61",desc:"Cuadrilla SAT MM",tiempo:"02/06 17:34",grupo:"SAT"}]);
+function lbKey(e){if(e.key==='Escape')closeLB();if(e.key==='ArrowLeft')navLB(-1);if(e.key==='ArrowRight')navLB(1);}
+</script>
 </body>
 </html>
