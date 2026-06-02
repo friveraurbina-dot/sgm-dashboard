@@ -94,6 +94,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
 .lb-counter{color:rgba(255,255,255,.5);font-size:.75rem}
 .footer{text-align:center;padding:12px 28px;font-size:.7rem;color:#bbb;border-top:1px solid #e8e8e8;margin:0 28px 16px}
 .footer a{color:#E30613;font-weight:600;text-decoration:none}
+.grupos-badges{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}.grupo-badge{background:rgba(255,255,255,.2);border-radius:12px;padding:2px 10px;font-size:.67rem;font-weight:700;white-space:nowrap}.grupo-badge.sat{background:rgba(2,132,199,.45)}.kpi.sat{border-top-color:#0284c7}.kpi.sat .kpi-value{color:#0284c7}.section.sat-section .section-header{border-bottom-color:#0284c7}.section.sat-section .section-header::before{background:#0284c7}.sat-card{border-radius:8px;padding:10px 12px;margin-bottom:8px;border-left:4px solid #0284c7;background:#f0f9ff}.sat-tipo{font-size:.68rem;font-weight:800;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;color:#0284c7}.sat-unidad{font-weight:700;font-size:.82rem;color:#0369a1;margin-bottom:5px}.sat-fields{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;margin:4px 0 6px;font-size:.73rem}.sat-fl{font-weight:700;color:#64748b;white-space:nowrap}.sat-fv{color:#1e293b}.sat-detalle{font-size:.72rem;color:#475569;margin:5px 0 4px;line-height:1.45;background:rgba(2,132,199,.07);border-radius:5px;padding:5px 8px}.sat-pendiente-note{font-size:.71rem;color:#92400e;background:#fef3c7;border-radius:4px;padding:3px 7px;margin-top:4px;border-left:3px solid #f59e0b}.sat-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:5px;border-top:1px solid rgba(2,132,199,.15)}.sat-tecnico{font-size:.68rem;font-weight:700;color:#0284c7}.sat-date{font-size:.68rem;color:#bbb}.msg-item.msg-sat{background:#f0f9ff;border-color:#bae6fd}.msg-badge{color:white;font-size:.63rem;padding:2px 7px;border-radius:10px;font-weight:700}.msg-badge.badge-mtto{background:#E30613}.msg-badge.badge-sat{background:#0284c7}
 </style>
 </head>
 <body>
@@ -102,6 +103,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
     <div class="header-title">
       <h1>Dashboard SGM – Distribución Chilquinta</h1>
       <p>martes 2 de junio de 2026 · Período activo: junio 2026</p>
+    <div class="grupos-badges"><span class="grupo-badge">📋 SGM — Mantenimiento</span><span class="grupo-badge sat">🔧 Reporte SAT Costa_MM</span></div>
     </div>
     <div class="header-right">
       <div class="hora">15:37</div>
@@ -114,7 +116,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
 
 <div class="kpi-row">
   <div class="kpi normal"><div class="kpi-value">NORMAL</div><div class="kpi-label">Estado General</div></div>
-  <div class="kpi warning"><div class="kpi-value">2</div><div class="kpi-label">Trabajos Activos</div></div>
+  <div class="kpi warning"><div class="kpi-value">2</div><div class="kpi-label">Mtto Activos</div></div>
+  <div class="kpi sat"><div class="kpi-value">1</div><div class="kpi-label">SAT Activos</div></div>
   <div class="kpi"><div class="kpi-value">1</div><div class="kpi-label">Capacitaciones</div></div>
   <div class="kpi"><div class="kpi-value">5</div><div class="kpi-label">Fotos junio</div></div>
   <div class="kpi sismo"><div class="kpi-value">1</div><div class="kpi-label">Eventos Sísmicos</div></div>
@@ -128,7 +131,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
 
 <div class="content">
   <div class="section">
-    <div class="section-header">Actividades junio 2026 — más recientes primero</div>
+    <div class="section-header">📋 Mantenimiento (SGM) — junio 2026 — más recientes primero</div>
     <div class="section-body"><div class="trabajo-card capacitacion">
       <div class="trabajo-status">🎓 Capacitación</div>
       <div class="trabajo-sender">Hernan Chqta</div>
@@ -149,6 +152,24 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
       <div class="trabajo-sender">Rodrigo Canihuante</div>
       <div class="trabajo-text">En ejecución reemplazo cruceta Alim. Quilpué (Rec Roosevelt Berna). Apoyo SIMANTEC, supervisión Mtto + EH&S.</div>
       <div class="trabajo-date">1/6/2026 · 14:27</div>
+    </div></div>
+  </div>
+
+  <div class="section sat-section">
+    <div class="section-header">🔧 SAT Costa_MM — junio 2026 — más recientes primero</div>
+    <div class="section-body"><div class="sat-card">
+      <div class="sat-tipo">🔧 Reporte Interrupción SAT</div>
+      <div class="sat-unidad">~ TPTP-98</div>
+      <div class="sat-fields">
+        <span class="sat-fl">Po:</span><span class="sat-fv">1606945</span>
+        <span class="sat-fl">Equipo / SED:</span><span class="sat-fv">SED 20192 santa margarita tres</span>
+        <span class="sat-fl">Probatorias FS:</span><span class="sat-fv">Sí</span>
+        <span class="sat-fl">Tipo de Orden:</span><span class="sat-fv">Presentación</span>
+        <span class="sat-fl">Causa:</span><span class="sat-fv">Manejo de vegetación</span>
+      </div>
+      <div class="sat-detalle">sed 20192 santa margarita tres pr 219799 con el pv 1835 entregado a las 10:24. Se procede a hacer poda menor en Pr ya mencionado verificando red Bt despejada. Servicio normal en la zona.</div>
+      <div class="sat-pendiente-note">⏳ Pendiente: Realizar retiro de ramas con área correspondiente</div>
+      <div class="sat-footer"><span class="sat-tecnico">👷 M.Silva – A.Silva</span><span class="sat-date">2/6/2026 · 11:09</span></div>
     </div></div>
   </div>
 
@@ -295,7 +316,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f0f0;color:#1a1a1a}
 </div>
 
 <div class="footer">
-  Generado automáticamente · Grupo WhatsApp SGM · Chilquinta Distribución ·
+  Generado automáticamente · SGM Mantenimiento + SAT Costa_MM · Chilquinta Distribución ·
   <a href="https://friveraurbina-dot.github.io/sgmdistribucion/" target="_blank">🔗 GitHub Pages</a>
 </div>
 
