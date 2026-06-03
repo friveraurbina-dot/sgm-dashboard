@@ -1,0 +1,23 @@
+{
+  "name": "tablero-sgm",
+  "version": "2.0.0",
+  "description": "Tablero de Gestión SGM · Chilquinta Distribución",
+  "scripts": {
+    "actualizar":       "python extractor/run.py",
+    "solo-web":         "python extractor/run.py --solo-web",
+    "solo-whatsapp":    "python extractor/run.py --solo-whatsapp",
+    "sin-github":       "python extractor/run.py --sin-github",
+    "solo-github":      "python extractor/run.py --solo-github",
+    "github-init":      "python extractor/github_manager.py init",
+    "github-push":      "python extractor/github_manager.py push",
+    "github-push-full": "python extractor/github_manager.py push-full",
+    "github-status":    "python extractor/github_manager.py status",
+    "whatsapp-solo":    "node extractor/whatsapp.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.26.0",
+    "puppeteer": "^22.0.0",
+    "qrcode-terminal": "^0.12.0"
+  },
+  "engines": { "node": ">=18.0.0" }
+}
