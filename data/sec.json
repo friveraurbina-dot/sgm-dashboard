@@ -1,0 +1,64 @@
+{
+  "actualizado": "2026-06-03T12:02:06",
+  "fecha": "03/06/2026 12:02",
+  "pct_normal": 5.0,
+  "regiones": [
+    {
+      "region": "La Araucanía",
+      "clientes": 1822
+    },
+    {
+      "region": "Los Lagos",
+      "clientes": 979
+    },
+    {
+      "region": "Valparaíso",
+      "clientes": 859
+    },
+    {
+      "region": "Metropolitana",
+      "clientes": 702
+    },
+    {
+      "region": "Coquimbo",
+      "clientes": 622
+    },
+    {
+      "region": "Los Ríos",
+      "clientes": 423
+    },
+    {
+      "region": "Ñuble",
+      "clientes": 380
+    },
+    {
+      "region": "Maule",
+      "clientes": 349
+    },
+    {
+      "region": "Biobío",
+      "clientes": 257
+    },
+    {
+      "region": "O'Higgins",
+      "clientes": 202
+    },
+    {
+      "region": "Aysén",
+      "clientes": 172
+    },
+    {
+      "region": "Antofagasta",
+      "clientes": 16
+    },
+    {
+      "region": "Tarapacá",
+      "clientes": 6
+    },
+    {
+      "region": "Atacama",
+      "clientes": 6
+    }
+  ],
+  "total_nacional": 6795
+}
