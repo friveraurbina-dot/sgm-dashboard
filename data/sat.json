@@ -1,11 +1,32 @@
 {
-  "actividades": [],
+  "actividades": [
+    {
+      "id": "sat-20260603-001",
+      "timestamp": "2026-06-03T12:36:00",
+      "autor": "~SSSGF-99 VINISE",
+      "tipo": "EN PROGRESO",
+      "descripcion": "9 fotos enviadas desde terreno por cuadrilla VINISE",
+      "fotos": [],
+      "po": null,
+      "sed": null
+    },
+    {
+      "id": "sat-20260602-001",
+      "timestamp": "2026-06-02T09:00:00",
+      "autor": "J.Almendares / J.Muñoz",
+      "tipo": "OPERACIONAL",
+      "descripcion": "Reporte sin Interrupcion SAT. Po: 1607099. SED: 20282. Causa: defecto de material. Tirante cortado por fatiga oxidada en poste 672747, SED 20282 Salas Cousino. Enrollado y senializado con cinta de peligro. Solicita reemplazo.",
+      "fotos": [],
+      "po": "1607099",
+      "sed": "20282"
+    }
+  ],
   "resumen": {
-    "total_actividades": 0,
+    "total_actividades": 2,
     "total_fotos": 0,
-    "tecnicos_activos": 0,
-    "avance_pct": 0,
-    "descripcion_general": "Sin actividades registradas. Ejecuta el extractor para comenzar.",
-    "ultima_actualizacion": null
+    "tecnicos_activos": 3,
+    "avance_pct": 75,
+    "descripcion_general": "2 reportes SAT. SED 20282 Salas Cousino con tirante por reemplazar. Cuadrilla VINISE activa en terreno.",
+    "ultima_actualizacion": "2026-06-03T12:36:00"
   }
 }
