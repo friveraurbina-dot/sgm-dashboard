@@ -1,15 +1,18 @@
 {
-  "grupo": "Reporte SAT Costa_MM",
-  "actualizado": "2026-06-03T19:33:25",
-  "fecha_inicio": "2026-06-01",
+  "resumen": {
+    "descripcion_general": "Incidente: poste traccionado por camión en Quintero. SED 24059, Alimentador Maitenes.",
+    "total_actividades": 1,
+    "total_fotos": 0,
+    "tecnicos_activos": 1,
+    "avance_pct": 30,
+    "ultima_actualizacion": "2026-06-03T15:11:00"
+  },
   "actividades": [
     {
-      "fecha": "2026-06-03",
-      "hora": "15:11",
-      "autor": "Cristian Tirado Chqta",
-      "texto": "Junto con saludar, se envía información entregada por Bomberos de Quintero respecto a poste traccionado por camión en calle Lazo con avenida Yungay, comuna de Quintero.\n\nAntecedentes:\nSED: 24059\nAlimentador: Maitenes\nNodo/Rótulo: 223247\nTipo: poste BT",
-      "tiene_foto": false,
-      "foto_url": ""
+      "timestamp": "2026-06-03T15:11:00",
+      "tipo": "Incidente SAT",
+      "descripcion": "[Cristian Tirado Chqta] Información de Bomberos de Quintero: poste traccionado por camión en calle Lazo con Av. Yungay, Quintero. SED: 24059 | Alimentador: Maitenes | Nodo: 223247 | Tipo: poste BT",
+      "fotos": []
     }
   ]
 }
