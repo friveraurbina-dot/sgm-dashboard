@@ -1,66 +1,24 @@
 {
-  "actualizado": "2026-06-03T19:26:48",
-  "fecha": "3 de June, 2026",
+  "actualizado": "2026-06-04T10:45:08",
+  "fecha": "4 de June, 2026",
   "ciudades": [
     {
-      "ciudad": "Valparaíso",
-      "max": 18,
-      "min": 11,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "Viña del Mar",
-      "max": 18,
-      "min": 11,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "Quillota",
-      "max": 20,
-      "min": 10,
-      "condicion": "Nubes y claros"
-    },
-    {
       "ciudad": "Los Andes",
-      "max": 21,
-      "min": 9,
-      "condicion": "Nubes y claros"
+      "max": 25,
+      "min": 11,
+      "condicion": "Parcialmente nublado"
     },
     {
       "ciudad": "Casablanca",
-      "max": 19,
+      "max": 20,
       "min": 10,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "San Antonio",
-      "max": 17,
-      "min": 10,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "Petorca",
-      "max": 21,
-      "min": 10,
-      "condicion": "Nubes y claros"
+      "condicion": "Parcialmente nublado"
     },
     {
       "ciudad": "La Ligua",
       "max": 20,
-      "min": 10,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "Putaendo",
-      "max": 21,
-      "min": 9,
-      "condicion": "Nubes y claros"
-    },
-    {
-      "ciudad": "Papudo",
-      "max": 17,
-      "min": 10,
-      "condicion": "Nubes y claros"
+      "min": 11,
+      "condicion": "Parcialmente nublado"
     }
   ],
   "horas": [
@@ -70,27 +28,27 @@
     },
     {
       "hora": "08:00",
-      "temp": 12
+      "temp": 13
     },
     {
       "hora": "10:00",
-      "temp": 14
+      "temp": 15
     },
     {
       "hora": "12:00",
-      "temp": 18
+      "temp": 25
     },
     {
       "hora": "14:00",
-      "temp": 17
+      "temp": 24
     },
     {
       "hora": "16:00",
-      "temp": 16
+      "temp": 23
     },
     {
       "hora": "18:00",
-      "temp": 15
+      "temp": 21
     },
     {
       "hora": "20:00",
